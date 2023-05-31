@@ -1,0 +1,12 @@
+version: 1
+default_environment: dev
+project_id: 7c6bd0da-da50-4b30-a4ca-c766710728ab
+environments:
+- name: dev
+- name: staging
+- name: prod
+plugins:
+  utilities:
+  - name: matatika
+    variant: matatika
+    pip_url: git+https://github.com/Matatika/matatika-ext.git@v0.8.0
