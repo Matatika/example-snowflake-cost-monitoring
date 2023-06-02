@@ -1,0 +1,89 @@
+{
+  "plugin_type": "loaders",
+  "name": "target-snowflake",
+  "namespace": "snowflake",
+  "variant": "matatika",
+  "label": "Snowflake",
+  "docs": "https://hub.meltano.com/loaders/snowflake--meltano.html",
+  "repo": "https://github.com/Matatika/target-snowflake",
+  "pip_url": "git+https://github.com/Matatika/target-snowflake@v0.1.1",
+  "description": "Snowflake is a cloud-based data warehousing platform.\n\nSnowflake is a fully-managed service that allows businesses to store, process, and analyze large amounts of structured and semi-structured data using cloud-based infrastructure. It provides a scalable and secure solution for data warehousing, data lakes, data engineering, data science, and data sharing. Snowflake's unique architecture separates compute and storage, allowing users to scale each independently and pay only for what they use. It also offers features such as automatic scaling, zero-copy cloning, and instant elasticity, making it easy for businesses to manage their data and derive insights from it. With Snowflake, users can query data using SQL, integrate with popular BI and ETL tools, and collaborate with others through secure data sharing.\n### Prerequisites\nTo obtain the required settings for connecting to Snowflake:\n\n1. Account: This is typically provided by your Snowflake administrator or can be found in the Snowflake web interface. It is the unique identifier for your Snowflake account.\n\n2. Username: This is the username you use to log in to Snowflake. It is typically provided by your Snowflake administrator.\n\n3. Password: This is the password you use to log in to Snowflake. It is typically provided by your Snowflake administrator.\n\n4. Role: This is the role you want to use when connecting to Snowflake. It is typically provided by your Snowflake administrator.\n\n5. Database: This is the name of the database you want to connect to in Snowflake. It is typically provided by your Snowflake administrator.\n\n6. Warehouse: This is the name of the warehouse you want to use when connecting to Snowflake. It is typically provided by your Snowflake administrator.\n\n7. Schema: This is the name of the schema you want to use when connecting to Snowflake. It is typically provided by your Snowflake administrator.",
+  "logo_url": "https://localhost:3443/assets/images/datastore/target-snowflake.png",
+  "settings": [
+    {
+      "name": "account",
+      "kind": "string",
+      "label": "Account",
+      "description": "The unique identifier for the Snowflake account to connect to.",
+      "protected": false,
+      "required": "true"
+    },
+    {
+      "name": "username",
+      "kind": "string",
+      "label": "Username",
+      "description": "The username to use for authentication.",
+      "protected": false,
+      "required": "true"
+    },
+    {
+      "name": "password",
+      "kind": "password",
+      "label": "Password",
+      "description": "The password to use for authentication.",
+      "protected": false,
+      "required": "true"
+    },
+    {
+      "name": "role",
+      "kind": "string",
+      "label": "Role",
+      "description": "The role to use for the session after connecting.",
+      "protected": false,
+      "required": "true"
+    },
+    {
+      "name": "database",
+      "kind": "string",
+      "label": "Database",
+      "description": "The name of the database to use after connecting.",
+      "protected": false,
+      "required": "true"
+    },
+    {
+      "name": "warehouse",
+      "kind": "string",
+      "label": "Warehouse",
+      "description": "The name of the warehouse to use after connecting.",
+      "protected": false,
+      "required": "true"
+    },
+    {
+      "name": "schema",
+      "kind": "string",
+      "value": "analytics",
+      "label": "Schema",
+      "description": "The name of the schema to use after connecting.",
+      "protected": false,
+      "value_processor": "upcase_string",
+      "required": "true"
+    },
+    {
+      "name": "batch_size",
+      "kind": "integer",
+      "value": 5000,
+      "label": "Batch Size",
+      "description": "The number of rows to fetch at a time when executing queries.",
+      "protected": false
+    },
+    {
+      "name": "timestamp_column",
+      "kind": "string",
+      "value": "__loaded_at",
+      "label": "Timestamp Column",
+      "description": "The name of the column to use as the timestamp for incremental loads.",
+      "protected": false
+    }
+  ],
+  "full_description": "Snowflake is a cloud-based data warehousing platform.\n\nSnowflake is a fully-managed service that allows businesses to store, process, and analyze large amounts of structured and semi-structured data using cloud-based infrastructure. It provides a scalable and secure solution for data warehousing, data lakes, data engineering, data science, and data sharing. Snowflake's unique architecture separates compute and storage, allowing users to scale each independently and pay only for what they use. It also offers features such as automatic scaling, zero-copy cloning, and instant elasticity, making it easy for businesses to manage their data and derive insights from it. With Snowflake, users can query data using SQL, integrate with popular BI and ETL tools, and collaborate with others through secure data sharing.\n### Prerequisites\nTo obtain the required settings for connecting to Snowflake:\n\n1. Account: This is typically provided by your Snowflake administrator or can be found in the Snowflake web interface. It is the unique identifier for your Snowflake account.\n\n2. Username: This is the username you use to log in to Snowflake. It is typically provided by your Snowflake administrator.\n\n3. Password: This is the password you use to log in to Snowflake. It is typically provided by your Snowflake administrator.\n\n4. Role: This is the role you want to use when connecting to Snowflake. It is typically provided by your Snowflake administrator.\n\n5. Database: This is the name of the database you want to connect to in Snowflake. It is typically provided by your Snowflake administrator.\n\n6. Warehouse: This is the name of the warehouse you want to use when connecting to Snowflake. It is typically provided by your Snowflake administrator.\n\n7. Schema: This is the name of the schema you want to use when connecting to Snowflake. It is typically provided by your Snowflake administrator.\n\n## Settings\n\n\n### Account\n\nThe unique identifier for the Snowflake account to connect to.\n\n### Username\n\nThe username to use for authentication.\n\n### Password\n\nThe password to use for authentication.\n\n### Role\n\nThe role to use for the session after connecting.\n\n### Database\n\nThe name of the database to use after connecting.\n\n### Warehouse\n\nThe name of the warehouse to use after connecting.\n\n### Schema\n\nThe name of the schema to use after connecting.\n\n### Batch Size\n\nThe number of rows to fetch at a time when executing queries.\n\n### Timestamp Column\n\nThe name of the column to use as the timestamp for incremental loads."
+}
