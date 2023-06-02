@@ -1,0 +1,84 @@
+# This file is managed by the 'analyze-snowflake' file bundle and updated automatically when `meltano upgrade` is run.
+# To prevent any manual changes from being overwritten, remove the file bundle from `meltano.yml` or disable automatic updates:
+#     meltano config --plugin-type=files analyze-snowflake set _update analyze/datasets/snowflake-monitoring/monthly_snowflake_invoice.yml false
+
+version: datasets/v0.2
+source: snowflake
+title: Monthly Snowflake invoice (All time)
+questions: What is the total amount invoice by Snowflake each month?
+description: |-
+  Monthly Snowflake invoice split by service.
+
+  ## Reproducing the Monthly Snowflake Invoice
+  The `daily_spend` model reproduces the monthly Snowflake invoice precisely, broken down by the same service categories. 
+  The daily_spend model contains additional columns for `warehouse_name`, `database_name` and `storage_type` to further break down spend.
+  
+  #snowflake #dbt-snowflake-monitoring
+metadata: |-
+  {
+    "name": "daily_spend",
+    "label": "Monthly Snowflake invoice (All time)", 
+    "related_table": {
+      "columns": [
+        {"name": "month", "label": "Month", "description": "Month"}
+      ],
+      "aggregates": [
+        {"name": "SearchOptimization", "label": "Search Optimization", "description": "Search Optimization"}, 
+        {"name": "QueryOptimization", "label": "Query Optimization", "description": "Query Optimization"}, 
+        {"name": "MaterializedViews", "label": "Materialized Views", "description": "Materialized Views"}, 
+        {"name": "Compute", "label": "Compute", "description": "Compute"}, 
+        {"name": "CloudServices", "label": "CloudServices", "description": "CloudServices"}, 
+        {"name": "AutomaticClustering", "label": "AutomaticClustering", "description": "AutomaticClustering"}, 
+        {"name": "Storage", "label": "Storage", "description": "Storage"}, 
+        {"name": "Snowpipe", "label": "Snowpipe", "description": "Snowpipe"}, 
+        {"name": "AdjForInclCloudServices", "label": "Adj For Incl Cloud Services", "description": "Adj For Incl Cloud Services"}, 
+        {"name": "Replication", "label": "Replication", "description": "Replication"},
+        {"name": "Other", "label": "Other", "description": "Other"}
+      ]
+    }
+  }
+visualisation: |-
+  {"chartjs-chart": 
+    {"chartType": "bar", 
+      "options": {
+        "scales": {
+          "x": {
+            "stacked": true
+          },
+          "y": {
+            "stacked": true,
+            "title": {
+                  "display": true,
+                  "text": "Service"
+            }
+          }
+        }
+      }
+    }
+  }
+query: |-
+  select
+      CONCAT(date_part(year, date), ' ', lpad(date_part(month, date), 2, '0')) as "daily_spend.month",
+      round(sum(CASE WHEN service = 'Search Optimization' THEN spend ELSE 0 END), 2) AS "daily_spend.SearchOptimization",
+      round(sum(CASE WHEN service = 'Query Optimization' THEN spend ELSE 0 END), 2) AS "daily_spend.QueryOptimization",
+      round(sum(CASE WHEN service = 'Materialized Views' THEN spend ELSE 0 END), 2) AS "daily_spend.MaterializedViews",
+      round(sum(CASE WHEN service = 'Compute' THEN spend ELSE 0 END), 2) AS "daily_spend.Compute",
+      round(sum(CASE WHEN service = 'Cloud Services' THEN spend ELSE 0 END), 2) AS "daily_spend.CloudServices",
+      round(sum(CASE WHEN service = 'Automatic Clustering' THEN spend ELSE 0 END), 2) AS "daily_spend.AutomaticClustering",
+      round(sum(CASE WHEN service = 'Storage' THEN spend ELSE 0 END), 2) AS "daily_spend.Storage",
+      round(sum(CASE WHEN service = 'Snowpipe' THEN spend ELSE 0 END), 2) AS "daily_spend.Snowpipe",
+      round(sum(CASE WHEN service = 'Adj For Incl Cloud Services' THEN spend ELSE 0 END), 2) AS "daily_spend.AdjForInclCloudServices",
+      round(sum(CASE WHEN service = 'Replication' THEN spend ELSE 0 END), 2) AS "daily_spend.Replication",
+      round(sum(CASE WHEN service != 'Search Optimization' 
+          AND service != 'Query Acceleration'
+          AND service != 'Materialized Views'
+          AND service != 'Compute'
+          AND service != 'Cloud Services'
+          AND service != 'Storage'
+          AND service != 'Snowpipe'
+          AND service != 'Adj For Incl Cloud Services'
+          AND service != 'Replication'
+          THEN spend ELSE 0 END), 2) AS "daily_spend.Other"
+  from daily_spend
+  group by 1
+  ORDER BY 1

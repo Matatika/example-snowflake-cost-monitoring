@@ -1,0 +1,64 @@
+# This file is managed by the 'analyze-snowflake' file bundle and updated automatically when `meltano upgrade` is run.
+# To prevent any manual changes from being overwritten, remove the file bundle from `meltano.yml` or disable automatic updates:
+#     meltano config --plugin-type=files analyze-snowflake set _update analyze/datasets/snowflake-monitoring/top_10_costliest_queries_last_30_days.yml false
+
+version: datasets/v0.2
+source: snowflake
+title: Top 10 costliest queries in the last 30 days
+questions: What are the costliest queries in the last 30 days?
+description: |-
+  ## Top 10 costliest queries in the last 30 days
+
+  These queries cost the most in the last 30 days.
+  
+  #snowflake #dbt-snowflake-monitoring
+metadata: |-
+  {
+    "name": "query_history",
+    "label": "Query history", 
+    "related_table": {
+      "columns": [
+        {"name": "query_signature", "label": "QueryID", "description": "QueryID"}
+      ],
+      "aggregates": [
+        {"name": "total_cost_last_30d", "label": "Total Cost L30D", "description": "Total Cost"},
+        {"name": "estimated_annual_cost", "label": "Estimated Annual Cost", "description": "Estimated Annual Cost"}
+      ]
+    }
+  }
+visualisation: |-
+  {"chartjs-chart": 
+    {"chartType": "bar", 
+      "options": {
+        "scales": {
+          "x": {},
+          "y": {}
+        }
+      }
+    }
+  }
+query: |-
+  with
+  max_date as (
+      select max(date(end_time)) as date
+      from query_history_enriched
+  )
+  select
+    md5(query_history_enriched.query_text_no_comments) as "query_history.query_signature",
+    any_value(query_history_enriched.query_text) as query_text,
+    sum(query_history_enriched.query_cost) as total_cost_last_30d,
+    sum(query_history_enriched.query_cost) as "query_history.total_cost_last_30d",
+    total_cost_last_30d*12 as "query_history.estimated_annual_cost",
+    get(array_agg(warehouse_name) within group (order by start_time desc), 0)::string as latest_warehouse_name,
+    get(array_agg(warehouse_size) within group (order by start_time desc), 0)::string as latest_warehouse_size,
+    get(array_agg(query_id) within group (order by start_time desc), 0)::string as latest_query_id,
+    avg(execution_time_s) as avg_execution_time_s,
+    count(*) as num_executions
+  from query_history_enriched
+  cross join max_date
+  where
+      query_history_enriched.start_time >= dateadd('day', -30, max_date.date)
+      and query_history_enriched.start_time < max_date.date -- don't include partial day of data
+  group by 1
+  order by total_cost_last_30d desc
+  limit 10

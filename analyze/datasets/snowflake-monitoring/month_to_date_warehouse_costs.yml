@@ -1,0 +1,73 @@
+# This file is managed by the 'analyze-snowflake' file bundle and updated automatically when `meltano upgrade` is run.
+# To prevent any manual changes from being overwritten, remove the file bundle from `meltano.yml` or disable automatic updates:
+#     meltano config --plugin-type=files analyze-snowflake set _update analyze/datasets/snowflake-monitoring/month_to_date_warehouse_costs.yml false
+
+version: datasets/v0.2
+source: snowflake
+title: Month to date Snowflake warehouse costs
+questions: What is the total Snowflake cost this month by warehouse?
+description: |-
+  ## Month to date Snowflake cost by warehouse.
+
+  Use this dataset to track which warehouse is costing the most.  Particularly useful
+  if you are working on cost reductions and want to monitor your impact.
+
+  #snowflake #dbt-snowflake-monitoring
+metadata: |-
+  {
+    "name": "daily_spend",
+    "label": "Month to date Snowflake warehouse costs", 
+    "related_table": {
+      "columns": [
+        {"name": "warehouse", "label": "Warehouse", "description": "Warehouse"}
+      ],
+      "aggregates": [
+        {"name": "compute", "label": "Compute", "description": "Compute"}, 
+        {"name": "storage", "label": "Storage", "description": "Storage"}
+      ]
+    }
+  }
+visualisation: |-
+  {"chartjs-chart": 
+    {"chartType": "bar", 
+      "options": {
+        "indexAxis": "y",
+        "plugins": {
+            "legend": {
+                "position": "right"
+            }
+        },
+        "scales": {
+          "x": {
+            "stacked": true,
+            "title": {
+                  "display": true,
+                  "text": "Cost"
+            }
+          },
+          "y": {
+            "title": {
+                  "display": true,
+                  "text": "Warehouse"
+            }
+          }
+        }
+      }
+    }
+  }
+query: |-
+  SELECT
+    warehouse_name as "daily_spend.warehouse",
+    round(sum(CASE WHEN service = 'Compute' THEN spend ELSE 0 END), 2) AS "daily_spend.compute",
+    round(sum(CASE WHEN service = 'Storage' THEN spend ELSE 0 END), 2) AS "daily_spend.storage",
+    round(sum(CASE WHEN service = 'Cloud Services' THEN spend ELSE 0 END), 2) AS "daily_spend.CloudServices",
+    round(sum(CASE WHEN service = 'Adj For Incl Cloud Services' THEN spend ELSE 0 END), 2) AS "daily_spend.AdjForInclCloudServices",
+    round(sum(CASE WHEN service != 'Compute'
+        AND service != 'Storage'
+        AND service != 'Cloud Services'
+        AND service != 'Adj For Incl Cloud Services'
+        THEN spend ELSE 0 END), 2) AS "daily_spend.Other"
+  FROM daily_spend
+  WHERE date_trunc('month', date)::date = date_trunc('month', CURRENT_TIMESTAMP)::date
+  GROUP BY 1
+  ORDER BY 1

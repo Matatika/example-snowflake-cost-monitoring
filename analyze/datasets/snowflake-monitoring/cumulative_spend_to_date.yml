@@ -1,0 +1,95 @@
+# This file is managed by the 'analyze-snowflake' file bundle and updated automatically when `meltano upgrade` is run.
+# To prevent any manual changes from being overwritten, remove the file bundle from `meltano.yml` or disable automatic updates:
+#     meltano config --plugin-type=files analyze-snowflake set _update analyze/datasets/snowflake-monitoring/cumulative_spend_to_date.yml false
+
+version: datasets/v0.2
+source: snowflake
+title: Cumulative Spend YTD
+questions: What is the total by day of month year to date?
+description: |-
+  Cumulative spend to date for all warehouses.
+  
+  #snowflake #dbt-snowflake-monitoring
+metadata: |-
+  {
+    "name": "snowflake_spend",
+    "label": "Snowflake Spend", 
+    "related_table": {
+      "columns": [
+        {"name": "spend_day", "label": "Day", "description": "Day"}
+      ],
+      "aggregates": [
+        {"name": "january", "label": "Jan", "description": "January"}, 
+        {"name": "february", "label": "Feb", "description": "February"}, 
+        {"name": "march", "label": "Mar", "description": "March"}, 
+        {"name": "april", "label": "Apr", "description": "April"}, 
+        {"name": "may", "label": "May", "description": "May"}, 
+        {"name": "june", "label": "Jun", "description": "June"}, 
+        {"name": "july", "label": "Jul", "description": "July"}, 
+        {"name": "august", "label": "Aug", "description": "August"}, 
+        {"name": "september", "label": "Sep", "description": "September"}, 
+        {"name": "october", "label": "Oct", "description": "October"}, 
+        {"name": "november", "label": "Nov", "description": "November"}, 
+        {"name": "december", "label": "Dec", "description": "December"}
+      ]
+    }
+  }
+visualisation: |-
+  {"chartjs-chart": 
+    {"chartType": "line", 
+      "options": {
+        "spanGaps": false,
+        "scales": {
+          "x": {
+            "title": {
+              "display": true,
+              "text": "Day of Month"
+            }
+          },
+          "y": {
+            "beginAtZero": true,
+            "title": {
+              "display": true,
+              "text": "Total Spend"
+            }
+          }
+        }
+      }
+    }
+  }
+query: |-
+  with recursive dim_date as (
+    select date_trunc('year', CURRENT_TIMESTAMP)::date as date_day --start
+    union all
+    select (date_day + INTERVAL '1 day')::date
+    from dim_date
+    where date_day < date_trunc('year', CURRENT_TIMESTAMP)::date + INTERVAL '1 year' + INTERVAL '-1 day'  --end
+  ), by_month AS (
+    SELECT date_day,
+      date_trunc('month', date_day)::date usage_month,
+      date_part('dayofmonth', date_day) as spend_day,
+      date_part('month', date_day) as spend_month,
+      sum(spend) as spent,
+      round(sum(spent) over(partition by date_trunc('month', date_day)::date order by date_day rows between UNBOUNDED PRECEDING and current row), 2) as cumulative
+    FROM dim_date
+      LEFT JOIN daily_spend ON date = dim_date.date_day
+    GROUP BY date_day, usage_month, spend_day
+    ORDER BY date_day, usage_month, spend_day
+  ) 
+  SELECT
+    spend_day as "snowflake_spend.spend_day",
+    sum(CASE WHEN spend_month = '1' THEN cumulative ELSE NULL END) AS "snowflake_spend.january",
+    sum(CASE WHEN spend_month = '2' THEN cumulative ELSE NULL END) AS "snowflake_spend.february",
+    sum(CASE WHEN spend_month = '3' THEN cumulative ELSE NULL END) AS "snowflake_spend.march",
+    sum(CASE WHEN spend_month = '4' THEN cumulative ELSE NULL END) AS "snowflake_spend.april",
+    sum(CASE WHEN spend_month = '5' THEN cumulative ELSE NULL END) AS "snowflake_spend.may",
+    sum(CASE WHEN spend_month = '6' THEN cumulative ELSE NULL END) AS "snowflake_spend.june",
+    sum(CASE WHEN spend_month = '7' THEN cumulative ELSE NULL END) AS "snowflake_spend.july",
+    sum(CASE WHEN spend_month = '8' THEN cumulative ELSE NULL END) AS "snowflake_spend.august",
+    sum(CASE WHEN spend_month = '9' THEN cumulative ELSE NULL END) AS "snowflake_spend.september",
+    sum(CASE WHEN spend_month = '10' THEN cumulative ELSE NULL END) AS "snowflake_spend.october",
+    sum(CASE WHEN spend_month = '11' THEN cumulative ELSE NULL END) AS "snowflake_spend.november",
+    sum(CASE WHEN spend_month = '12' THEN cumulative ELSE NULL END) AS "snowflake_spend.december"
+  FROM by_month
+  GROUP BY spend_day
+  ORDER BY spend_day

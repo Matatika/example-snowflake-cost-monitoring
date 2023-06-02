@@ -1,0 +1,56 @@
+# This file is managed by the 'analyze-snowflake' file bundle and updated automatically when `meltano upgrade` is run.
+# To prevent any manual changes from being overwritten, remove the file bundle from `meltano.yml` or disable automatic updates:
+#     meltano config --plugin-type=files analyze-snowflake set _update analyze/datasets/snowflake-monitoring/snowflake_spend_alltime.yml false
+
+version: datasets/v0.2
+source: snowflake
+title: Snowflake spend (All time)
+questions: What is the total Snowflake spend by month?
+description: |-
+  Snowflake spend for all warehouses.
+  
+  #snowflake #dbt-snowflake-monitoring
+metadata: |-
+  {
+    "name": "snowflake_spend",
+    "label": "Snowflake Spend", 
+    "related_table": {
+      "columns": [
+        {"name": "year", "label": "Year", "description": "Year"},
+        {"name": "month", "label": "Month", "description": "Month"}
+      ],
+      "aggregates": [
+        {"name": "spend", "label": "Cost", "description": "Cost"}
+      ]
+    }
+  }
+visualisation: |-
+  {"chartjs-chart": 
+    {"chartType": "bar", 
+      "options": {
+        "scales": {
+          "x": {
+            "title": {
+              "display": true,
+              "text": "Month"
+            }
+          },
+          "y": {
+            "beginAtZero": true,
+            "title": {
+              "display": true,
+              "text": "Total Spend"
+            }
+          }
+        }
+      }
+    }
+  }
+query: |-
+  SELECT
+    date_part(year, date) as "snowflake_spend.year",
+    lpad(date_part(month, date), 2, '0') as "snowflake_spend.month",
+    sum(round(spend, 2)) AS "snowflake_spend.spend"
+  FROM daily_spend
+  GROUP BY 1, 2
+  ORDER BY 1, 2
