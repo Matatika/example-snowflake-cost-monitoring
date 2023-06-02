@@ -11,3 +11,5 @@ pipeline_paths:
   - pipelines
 plugin_paths:
   - plugins
+data_store_paths:
+  - datastores

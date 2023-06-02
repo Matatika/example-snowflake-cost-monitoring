@@ -1,0 +1,4 @@
+version: datastores/v0.1
+name: Snowflake
+plugin: loaders/target-snowflake--matatika
+logo_url: /assets/images/datastore/target-snowflake.png
