@@ -1,0 +1,3 @@
+packages:
+- git: https://github.com/get-select/dbt-snowflake-monitoring
+  revision: 1.1.0
