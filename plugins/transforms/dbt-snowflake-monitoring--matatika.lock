@@ -1,0 +1,9 @@
+{
+  "plugin_type": "transforms",
+  "name": "dbt-snowflake-monitoring",
+  "namespace": "dbt-snowflake-monitoring",
+  "variant": "matatika",
+  "label": "dbt-snowflake-monitoring",
+  "repo": "https://github.com/Matatika/dbt-snowflake-monitoring",
+  "pip_url": "https://github.com/Matatika/dbt-snowflake-monitoring@v4.2.1"
+}
