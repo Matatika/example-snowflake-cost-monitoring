@@ -12,8 +12,8 @@ plugins:
     pip_url: git+https://github.com/Matatika/target-snowflake@v0.1.1
   transforms:
   - name: dbt-snowflake-monitoring
-    variant: get-select
-    pip_url: https://github.com/get-select/dbt-snowflake-monitoring@1.1.0
+    variant: matatika
+    pip_url: https://github.com/Matatika/dbt-snowflake-monitoring@v4.2.1
   transformers:
   - name: dbt
     variant: dbt-labs
