@@ -35,6 +35,6 @@ jobs:
   - dbt:deps
   - dbt:run
 schedules:
-- name: Snowflake Transforms
+- name: Cost analysis
   interval: 0 0 * * * *
   job: snowflake-transforms
