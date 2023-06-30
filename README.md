@@ -48,7 +48,13 @@ Using Matatika you can run this example with only docker and we create all the f
 
 4. Your web browser automatically opens [https://localhost:3443](https://localhost:3443)
 
-## Finish off steps here after we work out what task users have to complete and their other steps.
+5. You will see a task to complete `Complete your 'Snowflake' store configuration`, click `LET'S GO` and fill in your Snowflake credentials and click `SAVE`
+
+6. On the left hand menu go to the `Stores` screen, click the three dots at the end of the `Snowflake` data store, and click `Make default`
+
+7. Go to the `Pipelines screen`, and click the Run (play) button on the `Cost analysis` pipeline
+
+8. When this pipeline has completed go to the `Datasets` screen to see insights into your Snowflake costs!
 
 ---
 
