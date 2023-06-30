@@ -24,21 +24,11 @@ Using Matatika you can run this example with only docker and we create all the f
 
 ### Steps
 
-1. [Install Meltano](https://docs.meltano.com/getting-started/installation)
+You can run this as a stand alone Meltano project, you will need to provide all your config through `meltano config` or a `.env`. You will then need to run `meltano run dbt:deps dbt:run`. Then you can check your processed Snowflake cost data in new tables in your Snowflake database. 
 
-2. Clone and run a job:
-   ```terminal
-   git clone git@github.com:Matatika/snowflake-cost-monitoring.git
-   cd snowflake-cost-monitoring
-   meltano install
-   meltano run dbt:deps dbt:run
-   ```
-   
-   Next you will need to configure a .env or your system environment all of your Snowflake connection credentials.
-   
-   Slightly painful, right!?  Before you give up, carry on and let the Matatika Lab do all that for you.
+Or you can follow the steps below, use a UI to configure your project and see datasets in the Matatika Lab UI.
 
-3. Clone and start up the project:
+1. Clone and start up the project:
    ```terminal
    git clone git@github.com:Matatika/snowflake-cost-monitoring.git
    cd snowflake-cost-monitoring
@@ -46,15 +36,15 @@ Using Matatika you can run this example with only docker and we create all the f
    meltano invoke matatika lab
    ```
 
-4. Your web browser automatically opens [https://localhost:3443](https://localhost:3443)
+1. Your web browser automatically opens [https://localhost:3443](https://localhost:3443)
 
-5. You will see a task to complete `Complete your 'Snowflake' store configuration`, click `LET'S GO`, fill in your Snowflake credentials and click `SAVE`
+1. You will see a task to complete `Complete your 'Snowflake' store configuration`, click `LET'S GO`, fill in your Snowflake credentials and click `SAVE`
 
-6. On the left hand menu go to the `Stores` screen, click the three dots at the end of the `Snowflake` data store, and click `Make default`
+1. On the left hand menu go to the `Stores` screen, click the three dots at the end of the `Snowflake` data store, and click `Make default`
 
-7. Go to the `Pipelines screen`, and click the Run (play) button on the `Cost analysis` pipeline
+1. Go to the `Pipelines screen`, and click the Run (play) button on the `Cost analysis` pipeline
 
-8. When this pipeline has completed go to the `Datasets` screen to see insights into your Snowflake costs!
+1. When this pipeline has completed go to the `Datasets` screen to see insights into your Snowflake costs!
 
 ---
 
