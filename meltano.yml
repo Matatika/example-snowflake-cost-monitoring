@@ -21,14 +21,14 @@ plugins:
   files:
   - name: analyze-snowflake
     variant: matatika
-    pip_url: git+https://github.com/Matatika/analyze-snowflake-monitoring
+    pip_url: git+https://github.com/Matatika/analyze-snowflake-monitoring@v0.2.0
   - name: files-dbt
     variant: matatika
     pip_url: git+https://github.com/Matatika/files-dbt@v1.0.x.1
   utilities:
   - name: matatika
     variant: matatika
-    pip_url: git+https://github.com/Matatika/matatika-ext.git@v0.8.0
+    pip_url: git+https://github.com/Matatika/matatika-ext.git@v0.10.0
 jobs:
 - name: snowflake-transforms
   tasks:

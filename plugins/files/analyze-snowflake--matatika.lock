@@ -5,7 +5,7 @@
   "variant": "matatika",
   "label": "Snowflake Insights",
   "repo": "https://github.com/Matatika/analyze-snowflake-monitoring",
-  "pip_url": "git+https://github.com/Matatika/analyze-snowflake-monitoring",
+  "pip_url": "git+https://github.com/Matatika/analyze-snowflake-monitoring@v0.2.0",
   "description": "Instant insights on usage and costs from Snowflake.",
   "update": {
     "*.yml": "true"
