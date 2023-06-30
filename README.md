@@ -42,7 +42,7 @@ Or you can follow the steps below, use a UI to configure your project and see da
 
 1. On the left hand menu go to the `Stores` screen, click the three dots at the end of the `Snowflake` data store, and click `Make default`
 
-1. Go to the `Pipelines screen`, and click the Run (play) button on the `Cost analysis` pipeline
+1. Go to the `Pipelines screen`, and click the Run (play) button on the `Cost analysis` pipeline. This should take less than 2 minutes, you can check to job logs by expanding the pipeline with the button to the right of the Run (play) button.
 
 1. When this pipeline has completed go to the `Datasets` screen to see insights into your Snowflake costs!
 
