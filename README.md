@@ -24,7 +24,7 @@ Using Matatika you can run this example with only docker and we create all the f
 
 ### Steps
 
-You can run this as a stand alone Meltano project, you will need to provide all your config through `meltano config` or a `.env`. You will then need to run `meltano run dbt:deps dbt:run`. Then you can check your processed Snowflake cost data in new tables in your Snowflake database. 
+You can run this as a stand alone Meltano project, you will need to provide all your Snowflake credentials through `meltano config` or a `.env` for the `dbt` plugin. You will then need to run `meltano run dbt:deps dbt:run`. Finally you can check your processed Snowflake cost data in new tables in your Snowflake database.
 
 Or you can follow the steps below, use a UI to configure your project and see datasets in the Matatika Lab UI.
 
