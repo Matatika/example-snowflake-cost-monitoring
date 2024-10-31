@@ -28,7 +28,8 @@
     },
     {
       "name": "password",
-      "kind": "password",
+      "kind": "string",
+      "sensitive": true,
       "label": "Password",
       "description": "The password to use for authentication.",
       "protected": false,
