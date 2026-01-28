@@ -5,5 +5,14 @@
   "variant": "matatika",
   "label": "dbt-snowflake-monitoring",
   "repo": "https://github.com/Matatika/dbt-snowflake-monitoring",
-  "pip_url": "https://github.com/Matatika/dbt-snowflake-monitoring@v4.2.1"
+  "pip_url": "https://github.com/Matatika/dbt-snowflake-monitoring@v5.4.2.x",
+  "description": " Gain complete visibility into your Snowflake usage and optimise performance with custom pipelines.\nThis plugin is a dbt module managed by the Matatika Platform.  It pulls together your Snowflake usage and can be used in conjunction with our other plugins to form a complete picture of your cloud costs within your data warehouse.\n- Discover your biggest cost centres\n- Explore and monitor usage\n- Rapidly identify usage spikes\n\nMatatika enables you to surface optimisation opportunities in your standard BI Tools or our App.  Analytics engineers can immediately act on notifications or schedule automated actions.  Saving your teams hours of time and your company unnecessary costs.\n\n[Read more about our Cloud Intelligence App](https://www.matatika.com/cloud-intelligence/)\n",
+  "requires": {
+    "transformers": [
+      {
+        "name": "dbt",
+        "variant": "dbt-labs"
+      }
+    ]
+  }
 }

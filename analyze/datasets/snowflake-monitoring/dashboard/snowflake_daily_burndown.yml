@@ -1,0 +1,28 @@
+version: datasets/v0.2
+source: snowflake
+title: Snowflake Daily Burndown
+questions: How many snowflake credits do we have left?
+description: |-
+  Snowflake daily burndown.
+
+  #snowflake #dbt-snowflake-monitoring
+metadata: |-
+  {
+    "name": "snowflake_credits",
+    "label": "Snowflake Credits",
+    "related_table": {
+      "aggregates": [
+        {"name": "daily", "label": "Snowflake Credits", "description": "Snowflake Credits"},
+        {"name": "burndown", "label": "Snowflake Credits", "description": "Snowflake Credits"}
+      ]
+    }
+  }
+visualisation: |-
+  {"html-metric": {}}
+query: |-
+  SELECT
+      round(sum(credits_used) / 7,2) || ' Credits' as "snowflake_spend.daily"
+      , 'Days remaining: ' || round((SELECT min("remaining_credits") FROM SNOWFLAKE_CREDITS) / sum(credits_used / 7), 0) as "snowflake_spend.burndown"
+  FROM stg_warehouse_metering_history
+  WHERE start_time::DATE > CURRENT_DATE() - INTERVAL '7 day'
+  ORDER BY 1

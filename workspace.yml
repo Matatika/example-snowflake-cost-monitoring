@@ -1,16 +1,122 @@
-version: workspaces/v0.1
-name: Snowflake Cost Monitoring
+version: workspaces/v0.2
+name: Snowflake Cost
 app_properties:
+  DASHBOARD_CONTENT: |-
+    <style jsx>{`
+      .grey-border-right {border-right: 2px solid #D3D3D3}
+      .grey-box {
+        border: 1px solid #D3D3D3;
+        border-radius: 20px;
+        padding: 30px;
+        flex-direction: column;
+      }
+      .text-center {
+        text-align: center;
+        justify-content: center;
+      }
+      .chart-div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .metric-width {
+        min-width: 275px;
+      }
+      .chart-div > div {max-width: 400px}
+      @media screen and (max-width: 1449px) {
+        .grey-border-right {
+          border-right: none;
+        }
+        .grey-box, .text-center, .chart-div {
+          display: block;
+          margin: auto;
+        }
+        .chart-div > div {
+          display: block;
+          margin: auto;
+          padding-top: 10px;
+        }
+      }
+      @media screen and (min-width: 1450px) {
+        .grey-box, .text-center, .chart-div {
+          display: flex;
+        }
+        .grey-border-right {
+          border-right: 2px solid #D3D3D3;
+        }
+      }
+    `}</style>
+    <div style={{'padding': '10px'}}>
+      <div style={{'padding': '25px'}}>
+        <div className="chart-div" style={{'padding-bottom': '30px'}}>
+          <div>
+            <h2 className="text-center">Credit Spend</h2>
+            <DatasetChart alias="snowflake-monitoring/dashboard/snowflake_spend_last_7_days"/>
+          </div>
+          <div style={{'padding-top': '10px', 'height': '300px', 'width': '350px', 'padding-left': '25px', 'padding-right': '25px'}}>
+            <h2 className="text-center">Avg. Usage Per Day</h2>
+            <div style={{'font-size': '4px', 'padding-top': '10px'}}>
+              <DatasetChart alias="snowflake-monitoring/dashboard/snowflake_daily_burndown"/>
+              <div style={{'font-size': '2px'}}>
+                <DatasetChart alias="snowflake-monitoring/dashboard/snowflake_credits"/>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h2 className="text-center">Warehouse Utilisation</h2>
+            <DatasetChart alias="snowflake-monitoring/dashboard/snowflake_warehouse_utilisation_last_7_days" />
+          </div>
+        </div>
+        <div style={{'display':'flex', 'padding-bottom':'25px'}}>
+          <div style={{'border-top': '2px solid #D3D3D3', 'width': '100%'}}>
+          </div>
+        </div>
+        <div style={{'display':'flex', 'padding-bottom':'25px'}}>
+        </div>
+        <div className="chart-div" style={{'padding-bottom':'25px'}}>
+          <div className="grey-box">
+            <h2 className="text-center">Models Run</h2>
+            <DatasetChart alias="snowflake-monitoring/dashboard/snowflake_models_run_last_7_days" />
+          </div>
+          <div style={{'padding-left': '25px'}}>
+          </div>
+          <div className="grey-box">
+            <h2 className="text-center">Tests Run</h2>
+            <DatasetChart alias="snowflake-monitoring/dashboard/snowflake_tests_run_last_7_days" />
+          </div>
+          <div style={{'padding-left': '25px'}}>
+          </div>
+        </div>
+        <div style={{'display': 'block' }}>
+          <div>
+            <h2 className="text-center">10 most expensive queries over the last 7 days</h2>
+            <DatasetChart alias="snowflake-monitoring/dashboard/top_10_costing_queries_last_7_days" />
+          </div>
+        </div>
+      </div>
+    </div>
+  HOME_PAGE: dashboard
+  APP_MENU_ITEMS: |-
+    [
+      {"name": "dashboard", "faIcon": "chart-bar", "label": "Dashboard"},
+      {"name": "explore", "faIcon": "hashtag", "label": "Explore"},
+      {"name": "channels", "faIcon": "database", "label": "Channels"},
+      {"name": "library", "faIcon": "list", "label": "Library"},
+      {"name": "starred", "faIcon": "star", "label": "Starred"},
+      {"name": "help", "faIcon": "question-circle", "label": "Help"}
+    ]
+  DASHBOARD_PAGE_TITLE: Snowflake Cost Dashboard
   WELCOME_DATASET_ALIAS: welcome
 default_data_store: Snowflake
 dataset_paths:
-  - analyze/datasets
-  - .meltano/analyze/datasets
+- analyze/datasets
+- .meltano/analyze/datasets
 channel_paths:
-  - analyze/channels
+- analyze/channels
 pipeline_paths:
-  - pipelines
+- pipelines
 plugin_paths:
-  - plugins
+- plugins
 data_store_paths:
-  - datastores
+- datastores
+state_datastore: Warehouse

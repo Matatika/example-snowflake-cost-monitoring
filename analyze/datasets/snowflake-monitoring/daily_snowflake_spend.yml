@@ -1,0 +1,79 @@
+# This file is managed by the 'analyze-snowflake' file bundle and updated automatically when `meltano upgrade` is run.
+# To prevent any manual changes from being overwritten, remove the file bundle from `meltano.yml` or disable automatic updates:
+#     meltano config --plugin-type=files analyze-snowflake set _update analyze/datasets/snowflake-monitoring/monthly_snowflake_invoice.yml false
+
+version: datasets/v0.2
+source: snowflake
+title: Daily Snowflake Spend Last 90 Days
+questions: What is the daily spend on snowflake per day
+description: |-
+  Daily snowflake spend for the last 90 days.
+
+  #snowflake #dbt-snowflake-monitoring
+metadata: |-
+  {
+    "name": "daily_spend",
+    "label": "Daily Snowflake Spend Last 90 Days", 
+    "related_table": {
+      "columns": [
+        {"name": "date", "label": "Date", "description": "Date"}
+      ],
+      "aggregates": [
+        {"name": "SearchOptimization", "label": "Search Optimization", "description": "Search Optimization"}, 
+        {"name": "QueryOptimization", "label": "Query Optimization", "description": "Query Optimization"}, 
+        {"name": "MaterializedViews", "label": "Materialized Views", "description": "Materialized Views"}, 
+        {"name": "Compute", "label": "Compute", "description": "Compute"}, 
+        {"name": "CloudServices", "label": "CloudServices", "description": "CloudServices"}, 
+        {"name": "AutomaticClustering", "label": "AutomaticClustering", "description": "AutomaticClustering"}, 
+        {"name": "Storage", "label": "Storage", "description": "Storage"}, 
+        {"name": "Snowpipe", "label": "Snowpipe", "description": "Snowpipe"}, 
+        {"name": "Replication", "label": "Replication", "description": "Replication"},
+        {"name": "Other", "label": "Other", "description": "Other"}
+      ]
+    }
+  }
+visualisation: |-
+  {"chartjs-chart": 
+    {"chartType": "bar", 
+      "options": {
+        "scales": {
+          "x": {
+            "stacked": true
+          },
+          "y": {
+            "stacked": true,
+            "title": {
+                  "display": true,
+                  "text": "Service"
+            }
+          }
+        }
+      }
+    }
+  }
+query: |-
+  select
+      date as "daily_spend.date",
+      round(sum(CASE WHEN service = 'Search Optimization' THEN spend ELSE 0 END), 2) AS "daily_spend.SearchOptimization",
+      round(sum(CASE WHEN service = 'Query Optimization' THEN spend ELSE 0 END), 2) AS "daily_spend.QueryOptimization",
+      round(sum(CASE WHEN service = 'Materialized Views' THEN spend ELSE 0 END), 2) AS "daily_spend.MaterializedViews",
+      round(sum(CASE WHEN service = 'Compute' THEN spend ELSE 0 END), 2) AS "daily_spend.Compute",
+      round(sum(CASE WHEN service = 'Cloud Services' THEN spend ELSE 0 END), 2) AS "daily_spend.CloudServices",
+      round(sum(CASE WHEN service = 'Automatic Clustering' THEN spend ELSE 0 END), 2) AS "daily_spend.AutomaticClustering",
+      round(sum(CASE WHEN service = 'Storage' THEN spend ELSE 0 END), 2) AS "daily_spend.Storage",
+      round(sum(CASE WHEN service = 'Snowpipe' THEN spend ELSE 0 END), 2) AS "daily_spend.Snowpipe",
+      round(sum(CASE WHEN service = 'Replication' THEN spend ELSE 0 END), 2) AS "daily_spend.Replication",
+      round(sum(CASE WHEN service != 'Search Optimization' 
+          AND service != 'Query Acceleration'
+          AND service != 'Materialized Views'
+          AND service != 'Compute'
+          AND service != 'Cloud Services'
+          AND service != 'Storage'
+          AND service != 'Snowpipe'
+          AND service != 'Adj For Incl Cloud Services'
+          AND service != 'Replication'
+          THEN spend ELSE 0 END), 2) AS "daily_spend.Other"
+  from daily_spend
+  where date > current_date - INTERVAL '90 day'
+  group by 1
+  order by 1

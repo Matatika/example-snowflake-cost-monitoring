@@ -1,0 +1,54 @@
+# This file is managed by the 'analyze-snowflake' file bundle and updated automatically when `meltano upgrade` is run.
+# To prevent any manual changes from being overwritten, remove the file bundle from `meltano.yml` or disable automatic updates:
+#     meltano config --plugin-type=files analyze-snowflake set _update analyze/datasets/snowflake-monitoring/monthly_snowflake_invoice.yml false
+
+version: datasets/v0.2
+source: snowflake
+title: Snowflake Spend Last 7 Days
+questions: What is the daily spend on snowflake per day
+description: |-
+  Daily snowflake spend for the last 7 days.
+
+  #snowflake #dbt-snowflake-monitoring
+metadata: |-
+  {
+    "name": "snowflake_spend",
+    "label": "Daily Snowflake Spend Last 7 Days", 
+    "related_table": {
+      "columns": [
+        {"name": "date", "label": "Date", "description": "Date"}
+      ],
+      "aggregates": [
+        {"name": "credits", "label": "Credits Used", "description": "Credits Used"}
+      ]
+    }
+  }
+visualisation: |-
+  {"chartjs-chart": 
+    {"chartType": "bar", 
+      "options": {
+        "scales": {
+          "x": {
+            "title": {
+              "display": true,
+              "text": "Date"
+            }
+          },
+          "y": {
+            "title": {
+              "display": true,
+              "text": "Credits Used"
+            }
+          }
+        }
+      }
+    }
+  }
+query: |-
+  SELECT
+    start_time::DATE as "snowflake_spend.date"
+    , round(sum(credits_used),2) as "snowflake_spend.credits"
+  FROM stg_warehouse_metering_history
+  WHERE start_time::DATE > CURRENT_DATE() - INTERVAL '7 day'
+  GROUP BY 1
+  ORDER BY 1

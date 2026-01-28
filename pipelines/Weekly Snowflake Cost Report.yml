@@ -1,0 +1,17 @@
+version: pipelines/v0.1
+name: Weekly Snowflake Cost Report
+schedule: 0 30 8 * * 5
+timeout: 900
+max_retries: 0
+data_components:
+  - notebook
+  - sendgrid
+properties:
+  notebook.path: notebook/snowflake_cost_report.ipynb
+  sendgrid.body: snowflake_cost_report_email_template.html
+  sendgrid.content_type: text/html
+  sendgrid.from_address: support@matatika.com
+  sendgrid.title: Snowflake Weekly Cost Report
+actions:
+- notebook:run
+- sendgrid:send

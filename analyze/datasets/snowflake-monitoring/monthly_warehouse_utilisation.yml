@@ -1,0 +1,57 @@
+version: datasets/v0.2
+source: snowflake
+title: Monthly Snowflake warehouse utilisation (All time)
+questions: What is the total Snowflake warehouse utilisation each month?
+description: |-
+  Monthly Snowflake utilisation by warehouse.
+
+  ## Monthly Utilisation per Warehouse
+
+  #snowflake #dbt-snowflake-monitoring
+metadata: |-
+  {
+    "name": "usage",
+    "label": "Monthly Snowflake utilisation (Last 12 months)", 
+    "related_table": {
+      "columns": [
+        {"name": "month", "label": "Month", "description": "Year and Month"}
+      ],
+      "aggregates": [
+        {"name": "prod_wh", "label": "PROD_WH", "description": "Production Models Warehouse"},
+        {"name": "load_wh", "label": "LOAD_WH", "description": "Load Warehouse"},
+        {"name": "utilisation", "label": "Utilisation", "description": "Overall Utilisation"} 
+      ]
+    }
+  }
+visualisation: |-
+  {"chartjs-chart": 
+    {"chartType": "line", 
+      "options": {
+        "scales": {
+          "x": {
+            "stacked": true
+          },
+          "y": {
+            "stacked": true,
+            "title": {
+                  "display": true,
+                  "text": "Utilisation"
+            }
+          }
+        }
+      }
+    }
+  }
+query: |-
+  -- what is the warehouse utilisation by month
+  SELECT
+    CONCAT(date_part(year, start_time), ' ', lpad(date_part(month, start_time), 2, '0')) as "usage.month",
+    round(avg(CASE WHEN warehouse_name = 'PROD_WH' THEN avg_running ELSE 0 END), 2) AS "usage.prod_wh",
+    round(avg(CASE WHEN warehouse_name = 'LOAD_WH' THEN avg_running ELSE 0 END), 2) AS "usage.load_wh",
+    round(avg(CASE WHEN warehouse_name != 'PROD_WH' 
+      AND warehouse_name != 'LOAD_WH'
+      THEN avg_running ELSE 0 END), 2) AS "usage.utilisation"
+  FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_LOAD_HISTORY
+  WHERE start_time >= dateadd('day', -365, current_date())
+  GROUP BY 1
+  ORDER BY 1

@@ -1,3 +1,7 @@
+# This file is managed by the 'analyze-snowflake' file bundle and updated automatically when `meltano upgrade` is run.
+# To prevent any manual changes from being overwritten, remove the file bundle from `meltano.yml` or disable automatic updates:
+#     meltano config --plugin-type=files analyze-snowflake set _update transform/dbt_project.yml false
+
 name: my_meltano_project
 version: '1.0'
 require-dbt-version: ['>=1.0.0', <2.0.0]
@@ -15,7 +19,6 @@ macro-paths:
 - macros
 snapshot-paths:
 - snapshots
-target-path: ../.meltano/transformers/dbt/target
 log-path: logs
 packages-install-path: dbt_packages
 clean-targets:
@@ -25,3 +28,15 @@ clean-targets:
 models:
   my_meltano_project:
   dbt-snowflake-monitoring: {}
+vars:
+  # enable the dbt-snowflake-monitoring rates from Google Sheet pipeline
+  raw_config_rate_sheet_daily_enabled: true
+dispatch:
+  - macro_namespace: dbt
+    search_order:
+      - my_meltano_project
+      - dbt_snowflake_monitoring
+      - dbt
+query-comment:
+  comment: '{{ dbt_snowflake_monitoring.get_query_comment(node) }}'
+  append: true # Snowflake removes prefixed comments.

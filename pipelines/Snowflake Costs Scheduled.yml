@@ -1,0 +1,10 @@
+version: pipelines/v0.1
+name: Snowflake Costs Scheduled
+schedule: 0 0 8 * * *
+timeout: 900
+data_components:
+- dbt
+actions:
+- dbt:deps
+- dbt:seed
+- dbt:run
