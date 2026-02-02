@@ -1,6 +1,8 @@
 def model(dbt, session):
 
-    dbt.config(materialized="incremental", unique_key="run_timestamp", schema="SNOWFLAKE_COST")
+    dbt.config(materialized="incremental"
+               , unique_key="run_timestamp"
+               , schema="SNOWFLAKE_COST")
 
     session.sql("SHOW RESOURCE MONITORS").collect()  # populate RESULT_SCAN
 

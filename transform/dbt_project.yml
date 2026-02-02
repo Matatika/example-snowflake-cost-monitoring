@@ -27,10 +27,16 @@ clean-targets:
 - logs
 models:
   my_meltano_project:
+    snowflake_credits:
+      # disable the snowflake_credits python dbt model
+      # this model runs and checks the resource monitors to get credits left and used.
+      # Used with Snowflake credits billing model 
+      +enabled: false
   dbt-snowflake-monitoring: {}
 vars:
-  # enable the dbt-snowflake-monitoring rates from Google Sheet pipeline
-  raw_config_rate_sheet_daily_enabled: true
+  # disable the dbt-snowflake-monitoring rates from Google Sheet pipeline
+  # by default, we expect the daily rates to be available i.e. Snowflake account agreement billing model
+  raw_config_rate_sheet_daily_enabled: false
 dispatch:
   - macro_namespace: dbt
     search_order:
