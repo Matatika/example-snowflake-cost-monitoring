@@ -1,0 +1,26 @@
+version: datasets/v0.2
+source: snowflake
+title: Snowflake Credits
+questions: How many snowflake credits do we have left?
+description: |-
+  Snowflake credits.
+
+  #snowflake #dbt-snowflake-monitoring
+metadata: |-
+  {
+    "name": "snowflake_credits",
+    "label": "Snowflake Credits",
+    "related_table": {
+      "aggregates": [
+        {"name": "credits", "label": "Snowflake Credits", "description": "Snowflake Credits"}
+      ]
+    }
+  }
+visualisation: |-
+  {"html-metric": {}}
+query: |-
+  SELECT 
+    "remaining_credits" || ' / ' || "credit_quota" as "snowflake_credits.credits"
+  FROM snowflake_credits
+  ORDER BY run_timestamp DESC
+  LIMIT 1

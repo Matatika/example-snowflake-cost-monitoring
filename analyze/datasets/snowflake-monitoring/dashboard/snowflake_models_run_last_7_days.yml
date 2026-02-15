@@ -1,0 +1,58 @@
+# This file is managed by the 'analyze-snowflake' file bundle and updated automatically when `meltano upgrade` is run.
+# To prevent any manual changes from being overwritten, remove the file bundle from `meltano.yml` or disable automatic updates:
+#     meltano config --plugin-type=files analyze-snowflake set _update analyze/datasets/snowflake-monitoring/monthly_snowflake_invoice.yml false
+
+version: datasets/v0.2
+source: snowflake
+title: Models Run Last 7 Days
+questions: How many models do we run per day?
+description: |-
+  Models run per day for the last 7 days
+
+  #snowflake #dbt-snowflake-monitoring
+metadata: |-
+  {
+    "name": "query_history_enriched",
+    "label": "Models Run Last 7 Days", 
+    "related_table": {
+      "columns": [
+        {"name": "date", "label": "Date", "description": "Date"}
+      ],
+      "aggregates": [
+        {"name": "model_count", "label": "No. Models", "description": "No. Models"}
+      ]
+    }
+  }
+visualisation: |-
+  {"chartjs-chart": 
+    {"chartType": "bar", 
+      "options": {
+        "scales": {
+          "x": {
+            "title": {
+              "display": true,
+              "text": "Date"
+            }
+          },
+          "y": {
+            "title": {
+              "display": true,
+              "text": "No. Models"
+            }
+          }
+        }
+      }
+    }
+  }
+query: |-
+  SELECT 
+    START_TIME::date as "query_history_enriched.date"
+    , count(dbt_metadata['node_id']::STRING) as "query_history_enriched.model_count"
+  FROM query_history_enriched
+  WHERE start_time::DATE > CURRENT_DATE() - INTERVAL '7 day'
+  and dbt_metadata is not NULL
+  AND query_credits != 0
+  AND dbt_metadata['node_id']::STRING NOT LIKE 'test%'
+  AND query_type LIKE 'CREATE%'
+  GROUP BY 1
+  ORDER BY 1

@@ -1,40 +1,45 @@
 version: 1
 default_environment: dev
-project_id: 7c6bd0da-da50-4b30-a4ca-c766710728ab
+project_id: aca13644-9308-4954-bdf0-5c98fa8f14b9
 environments:
 - name: dev
 - name: staging
 - name: prod
 plugins:
+  extractors:
+  - name: tap-google-sheets
+    variant: matatika
+    pip_url: git+https://github.com/Matatika/tap-google-sheets@v0.4.0
   loaders:
+  - name: target-postgres
+    variant: matatika
+    pip_url: git+https://github.com/Matatika/pipelinewise-target-postgres@v0.2.0
   - name: target-snowflake
     variant: matatika
-    pip_url: git+https://github.com/Matatika/target-snowflake@v0.1.1
+    pip_url: git+https://github.com/Matatika/target-snowflake--meltanolabs@v0.15.0
   transforms:
   - name: dbt-snowflake-monitoring
     variant: matatika
-    pip_url: https://github.com/Matatika/dbt-snowflake-monitoring@v4.2.1
+    pip_url: https://github.com/Matatika/dbt-snowflake-monitoring@v5.4.2.x
   transformers:
   - name: dbt
     variant: dbt-labs
-    pip_url: "dbt-core~=1.3.0 dbt-postgres~=1.3.0 dbt-snowflake~=1.3.0\n"
+    pip_url: "dbt-core~=1.7.0 dbt-postgres~=1.7.0 dbt-snowflake~=1.7.0\n"
+    commands:
+      full-refresh:
+        args: run --full-refresh
+        description: Full refresh of all models.
   files:
-  - name: analyze-snowflake
-    variant: matatika
-    pip_url: git+https://github.com/Matatika/analyze-snowflake-monitoring@v0.2.0
   - name: files-dbt
     variant: matatika
-    pip_url: git+https://github.com/Matatika/files-dbt@v1.0.x.1
-  utilities:
-  - name: matatika
+    pip_url: git+https://github.com/Matatika/files-dbt@v1.1
+  - name: analyze-snowflake
     variant: matatika
-    pip_url: git+https://github.com/Matatika/matatika-ext.git@v0.10.0
-jobs:
-- name: snowflake-transforms
-  tasks:
-  - dbt:deps
-  - dbt:run
-schedules:
-- name: Cost analysis
-  interval: 0 0 * * * *
-  job: snowflake-transforms
+    pip_url: git+https://github.com/Matatika/analyze-snowflake-monitoring@v0.3.0
+  utilities:
+  - name: notebook
+    variant: matatika
+    pip_url: git+https://github.com/Matatika/utility-notebook.git
+  - name: sendgrid
+    variant: matatika
+    pip_url: git+https://github.com/Matatika/utility-sendgrid.git

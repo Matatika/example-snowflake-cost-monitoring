@@ -5,7 +5,16 @@
   "variant": "matatika",
   "label": "files-dbt",
   "repo": "https://github.com/Matatika/files-dbt",
-  "pip_url": "git+https://github.com/Matatika/files-dbt@v1.0.x.1",
+  "pip_url": "git+https://github.com/Matatika/files-dbt@v1.1",
+  "description": " Files dbt is a file bundle that automatically configures your project to run transforms with dbt.\nThe bundle includes template project configuration:\n\n- transform/models (directory)\n- transform/profile/profiles.yml\n- transform/dbt_project.yml\n- transform/.gitignore\n- transform/macros/centralize_test_failures.sql\n",
+  "requires": {
+    "transformers": [
+      {
+        "name": "dbt",
+        "variant": "dbt-labs"
+      }
+    ]
+  },
   "update": {
     "transform/profile/profiles.yml": "true"
   }

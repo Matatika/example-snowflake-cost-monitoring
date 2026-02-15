@@ -1,0 +1,10 @@
+version: pipelines/v0.1
+name: Daily Rates
+timeout: 0
+max_retries: 0
+properties:
+  tap-google-sheets.stream_name: rate_sheet_daily
+  Snowflake.default_target_schema: RAW_CONFIG
+data_components:
+- tap-google-sheets
+- Snowflake

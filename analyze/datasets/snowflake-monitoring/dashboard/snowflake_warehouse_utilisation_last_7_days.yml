@@ -1,0 +1,53 @@
+version: datasets/v0.2
+source: snowflake
+title: Snowflake Warehouse Utilisation (All time)
+questions: What is the total Snowflake warehouse utilisation each day?
+description: |-
+  Daily Snowflake utilisation by warehouse.
+
+  #snowflake #dbt-snowflake-monitoring
+metadata: |-
+  {
+    "name": "usage",
+    "label": "Daily Snowflake utilisation (Last 7 days)", 
+    "related_table": {
+      "columns": [
+        {"name": "date", "label": "Date", "description": "Date"}
+      ],
+      "aggregates": [
+        {"name": "prod_usage", "label": "PROD Warehouse Utilisation", "description": "PROD Warehouse Utilisation"},
+        {"name": "uat_usage", "label": "UAT Warehouse Utilisation", "description": "UAT Warehouse Utilisation"},
+        {"name": "other_usage", "label": "Other Warehouse Utilisation", "description": "Other Warehouse Utilisation"}
+      ]
+    }
+  }
+visualisation: |-
+  {"chartjs-chart": 
+    {"chartType": "line", 
+      "options": {
+        "scales": {
+          "x": {
+            "stacked": true
+          },
+          "y": {
+            "beginAtZero": true,
+            "max": 1.2,
+            "title": {
+                  "display": true,
+                  "text": "Utilisation"
+            }
+          }
+        }
+      }
+    }
+  }
+query: |-
+  SELECT
+    start_time::DATE AS "usage.date",
+    ROUND(AVG(CASE WHEN warehouse_name IN ('PROD_WH', 'PROD_LOAD') THEN avg_running END), 2) AS "usage.prod_usage",
+    ROUND(AVG(CASE WHEN warehouse_name IN ('UAT_WH', 'COMPUTE_WH') THEN avg_running END), 2) AS "usage.uat_usage",
+    ROUND(AVG(CASE WHEN warehouse_name NOT IN ('PROD_WH', 'PROD_LOAD', 'UAT_WH', 'COMPUTE_WH') THEN avg_running END), 2) AS "usage.other_usage"
+  FROM snowflake.account_usage.warehouse_load_history
+  WHERE start_time::DATE > CURRENT_DATE() - INTERVAL '7 day'
+  GROUP BY 1
+  ORDER BY 1

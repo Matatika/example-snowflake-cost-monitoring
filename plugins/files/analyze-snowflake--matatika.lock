@@ -3,12 +3,20 @@
   "name": "analyze-snowflake",
   "namespace": "dbt-snowflake-monitoring",
   "variant": "matatika",
-  "label": "Snowflake Insights",
+  "label": "Snowflake Cost Explorer",
   "repo": "https://github.com/Matatika/analyze-snowflake-monitoring",
-  "pip_url": "git+https://github.com/Matatika/analyze-snowflake-monitoring@v0.2.0",
+  "pip_url": "git+https://github.com/Matatika/analyze-snowflake-monitoring@v0.3.0",
   "description": "Instant insights on usage and costs from Snowflake.",
-  "update": {
-    "*.yml": "true"
+  "logo_url": "/assets/images/utility/matatika.png",
+  "requires": {
+    "transforms": [
+      {
+        "name": "dbt-snowflake-monitoring",
+        "variant": "matatika"
+      }
+    ]
   },
-  "full_description": "Instant insights on usage and costs from Snowflake."
+  "update": {
+    "*.yml": "false"
+  }
 }

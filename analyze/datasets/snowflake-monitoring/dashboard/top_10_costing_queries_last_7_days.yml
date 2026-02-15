@@ -1,0 +1,40 @@
+version: datasets/v0.2
+source: snowflake
+title: Top 10 Costing Queries Last 7 Days
+questions: What are my top 10 costing queries for the last 7 days?
+description: |-
+  Top 10 Costing Queries Last 7 Days
+metadata: |-
+  {
+    "name": "query_history",
+    "label": "Queries", 
+    "related_table": {
+      "columns": [
+        {"name": "dbt_node_id", "label": "Name", "description": "Model Name"},
+        {"name": "num_executions", "label": "Runs", "description": "Runs"},
+        {"name": "credits_per_run", "label": "Avg. Credits", "description": "Avg. Credits"},
+        {"name": "total_credits_last_7d", "label": "Total Credits", "description": "Total Credits"},
+        {"name": "percent_of_total_credits", "label": "% All Credits", "description": "% All Credits"},
+        {"name": "avg_run_time", "label": "Avg. Run Time", "description": "Avg. Run Time"},
+        {"name": "run_time", "label": "Run Time", "description": "Run Time"}
+      ]
+    }
+  }
+visualisation: '{"html-table": {}}'
+query: |-
+  select
+      dbt_metadata['node_id']::string  as "query_history.dbt_node_id",
+      count(*) AS "query_history.num_executions",
+      round(sum(query_history_enriched.QUERY_CREDITS) / count(*), 2) as "query_history.credits_per_run",
+      round(sum(query_history_enriched.QUERY_CREDITS), 2) as "query_history.total_credits_last_7d",
+      round(sum(query_history_enriched.QUERY_CREDITS)/ sum(sum(query_history_enriched.QUERY_CREDITS)) OVER () * 100, 2) as "query_history.percent_of_total_credits",
+      FLOOR(AVG(TOTAL_ELAPSED_TIME_S) / 3600) || ':' || LPAD(FLOOR(MOD(AVG(TOTAL_ELAPSED_TIME_S), 3600) / 60), 2, '0') || ':' || LPAD(FLOOR(MOD(AVG(TOTAL_ELAPSED_TIME_S), 60)), 2, '0') AS "query_history.avg_run_time",
+      FLOOR(SUM(TOTAL_ELAPSED_TIME_S) / 3600) || ':' || LPAD(FLOOR(MOD(SUM(TOTAL_ELAPSED_TIME_S), 3600) / 60), 2, '0') || ':' || LPAD(FLOOR(MOD(SUM(TOTAL_ELAPSED_TIME_S), 60)), 2, '0') AS "query_history.run_time"
+  from query_history_enriched
+  where
+      start_time::DATE > CURRENT_DATE() - INTERVAL '7 day'
+      and dbt_metadata is not NULL
+      AND QUERY_CREDITS != 0
+  group by 1
+  order by "query_history.total_credits_last_7d" desc
+  limit 10

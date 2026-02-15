@@ -1,0 +1,55 @@
+# This file is managed by the 'analyze-snowflake' file bundle and updated automatically when `meltano upgrade` is run.
+# To prevent any manual changes from being overwritten, remove the file bundle from `meltano.yml` or disable automatic updates:
+#     meltano config --plugin-type=files analyze-snowflake set _update analyze/datasets/snowflake-monitoring/daily_dbt_model_running_costs_over_time.yml false
+
+version: datasets/v0.2
+source: snowflake
+title: Daily dbt running costs (All time)
+questions: What is the running costs for dbt each day?
+description: |-
+  Daily dbt running costs.
+  
+  #snowflake #dbt-snowflake-monitoring
+metadata: |-
+  {
+    "name": "snowflake_spend",
+    "label": "Snowflake Spend", 
+    "related_table": {
+      "columns": [
+        {"name": "date", "label": "Date", "description": "Date"}
+      ],
+      "aggregates": [
+        {"name": "spend", "label": "Cost", "description": "Cost"}
+      ]
+    }
+  }
+visualisation: |-
+  {"chartjs-chart": 
+    {"chartType": "bar", 
+      "options": {
+        "scales": {
+          "x": {
+            "title": {
+              "display": true,
+              "text": "Month"
+            }
+          },
+          "y": {
+            "beginAtZero": true,
+            "title": {
+              "display": true,
+              "text": "Cost"
+            }
+          }
+        }
+      }
+    }
+  }
+query: |-
+  select
+      date(start_time) as "snowflake_spend.date",
+      sum(query_cost) as "snowflake_spend.cost"
+  from query_history_enriched
+  where dbt_metadata['node_id']::string='<dbt model node id>'
+  group by 1
+  order by 1 desc

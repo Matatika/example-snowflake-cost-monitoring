@@ -1,0 +1,71 @@
+{
+  "plugin_type": "utilities",
+  "name": "notebook",
+  "namespace": "utility_notebook",
+  "variant": "matatika",
+  "label": "Notebook",
+  "pip_url": "git+https://github.com/Matatika/utility-notebook.git",
+  "description": "Utility for running and converting Jupyter notebooks.\n\n## Utility settings\n### Path\n\nThis setting is the location of the Jupyter notebook or directory of notebooks you want to run and or convert.\n\n### Format\n\nIf you want to convert your Jupyter notebooks, you can provide a format.\n\nCurrently supported format: `pdf`\n\n### Config\n\nWhen converting your Jupyter notebooks you can provide additional config to customize the output.\n\nWe have one custom config: no-code. This excludes any code output from executed files and makes the output pdf generally neater.\n\nYou can pass completely custom configs into this setting, for more information go to the documentation link in the Learn more section below.\n\n## Learn more\n\n[Notebook Utility Documentation](https://github.com/Matatika/utility-notebook/blob/master/README.md)",
+  "logo_url": "/assets/images/utility/notebook.png",
+  "settings": [
+    {
+      "name": "path",
+      "kind": "string",
+      "label": "Path",
+      "hidden": false,
+      "sensitive": false,
+      "required": "true",
+      "protected": false
+    },
+    {
+      "name": "format",
+      "kind": "string",
+      "label": "Format",
+      "hidden": false,
+      "sensitive": false,
+      "protected": false
+    },
+    {
+      "name": "config",
+      "kind": "string",
+      "label": "Config",
+      "hidden": false,
+      "sensitive": false,
+      "protected": false
+    },
+    {
+      "name": "client_id",
+      "kind": "string",
+      "label": "Client ID",
+      "hidden": false,
+      "sensitive": true,
+      "protected": false
+    },
+    {
+      "name": "client_secret",
+      "kind": "string",
+      "label": "Client Secret",
+      "hidden": false,
+      "sensitive": true,
+      "protected": false
+    }
+  ],
+  "commands": {
+    "run-convert-config": {
+      "args": "run $NOTEBOOK_PATH -f $NOTEBOOK_FORMAT -c $NOTEBOOK_CONFIG",
+      "description": "Run and convert one/many notebooks to a selected format with a config."
+    },
+    "run": {
+      "args": "run $NOTEBOOK_PATH",
+      "description": "Run one/many notebooks, saving their executed state."
+    },
+    "convert": {
+      "args": "convert $NOTEBOOK_PATH -f $NOTEBOOK_FORMAT",
+      "description": "Convert one/many notebooks to a selected format."
+    },
+    "run-convert": {
+      "args": "run $NOTEBOOK_PATH -f $NOTEBOOK_FORMAT",
+      "description": "Run and convert one/many notebooks to a selected format."
+    }
+  }
+}
