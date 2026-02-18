@@ -1,5 +1,5 @@
 version: pipelines/v0.1
-name: Weekly Snowflake Cost Report
+label: Weekly Snowflake Cost Report
 schedule: 0 30 8 * * 5
 timeout: 900
 max_retries: 0

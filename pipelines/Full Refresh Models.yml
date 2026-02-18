@@ -1,5 +1,5 @@
 version: pipelines/v0.1
-name: Full Refresh Models
+label: Full Refresh Models
 timeout: 14400
 max_retries: 0
 data_components:

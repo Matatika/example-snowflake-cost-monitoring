@@ -1,5 +1,5 @@
 version: pipelines/v0.1
-name: Daily Rates
+label: Daily Rates
 timeout: 0
 max_retries: 0
 properties:
